@@ -7,19 +7,20 @@ using System.Threading.Tasks;
 
 public class Program
 {
-	private const string VERSION = "1.6.1";
+	private const string VERSION = "1.7";
 	private static Form SU_form;
 	private static Form TN_form;
-	private static async Task TN_wait_a_min()
+	private static async Task TN_wait_ten_sec()
 	{
 		if (VERSION.Contains("TEST"))
 		{ Console.WriteLine("Rest test: 1 sec."); await Task.Delay(1000); }
 		else
-		{ await Task.Delay(60 * 1000); }
+		{ await Task.Delay(10 * 1000); }
 	}
 	private static bool ShowTNform(uint time, char mode)
 	{
 		bool dismisspressed = false;
+		bool innerClose = false;
 		TN_form = new Form();
 		TN_form.Text = "TimeAlarm - Time to have some break!";
 		TN_form.BackColor = Color.FromArgb(255, 19, 70, 19);
@@ -27,6 +28,10 @@ public class Program
 		TN_form.WindowState = FormWindowState.Maximized;
 		TN_form.ControlBox = false;
 		TN_form.TopMost = true;
+		TN_form.FormClosing += (object sender, FormClosingEventArgs e) => {
+			if (!(innerClose || dismisspressed))
+				e.Cancel = true;
+		};
 		//Title label
 		Label TFTitle = new Label();
 		TFTitle.Font = new Font("Meiryo UI", 32, FontStyle.Bold);
@@ -52,7 +57,7 @@ public class Program
 			TFClose.BackColor = Color.FromName("Control");
 			TFClose.AutoSize = false;
 			TFClose.Size = TFClose.PreferredSize;
-			TFClose.Click += (sender, e) => { TN_form.Close(); };
+			TFClose.Click += (sender, e) => { innerClose = true; TN_form.Close(); };
 			TN_form.Controls.Add(TFTitle);
 			TN_form.Controls.Add(TFDesc);
 			TN_form.Controls.Add(TFClose);
@@ -91,16 +96,35 @@ public class Program
 			TFDesc.Text = "Eye resting: 10 minute(s) left";
 			TFDesc.Size = TFDesc.PreferredSize;
 			TFDesc.Refresh();
-			Console.WriteLine("Start resting");
+			Console.WriteLine("Started rest counting");
 			TFBreak.Enabled = false;
-			for (int i = 10; i > 0; i--)
+			for (int i = 10; i > 0;)
 			{
-				await TN_wait_a_min();
-				TFDesc.Text = "Eye resting: " + i.ToString() + " minute(s) left";
+				i--;
+				for (int j = 50; j >= 0; j -= 10)
+				{
+					await TN_wait_ten_sec();
+					TFDesc.Text = "Eye resting: " + i.ToString() + " minute(s) ";
+					if (j != 0)
+						TFDesc.Text += j.ToString() + " second(s) ";
+					TFDesc.Text += "left";
+					TFDesc.Size = TFDesc.PreferredSize;
+				}
 			}
+			Console.WriteLine("Ended rest counting");
+			TFBreak.Visible = false;
+			Button TFQuit = new Button();
+			TFQuit.Font = new Font("Meiryo UI", 24);
+			TFQuit.Text = "Have a break of\n10 minutes";
+			TFQuit.Location = new Point(1350, 850);
+			TFQuit.BackColor = Color.FromName("Control");
+			TFQuit.AutoSize = false;
+			TFQuit.Size = TFBreak.Size;
+			TFQuit.Text = "End resting";
+			TFQuit.Click += (object csender, EventArgs ce) => { innerClose = true; TN_form.Close(); };
+			TN_form.Controls.Add(TFQuit);
+			TFQuit.Visible = true;
 			Console.WriteLine("End resting");
-			MessageBox.Show("10 minutes have passed!", "TimeAlarm");
-			TN_form.Close();
 		};
 		//Add control & Run
 		TN_form.Controls.Add(TFTitle);
@@ -133,7 +157,7 @@ public class Program
 		Console.WriteLine(@" / / / / / / / / /  __/ ___ |/ / /_/ / /  / / / / / /");
 		Console.WriteLine(@"/_/ /_/_/ /_/ /_/\___/_/  |_/_/\__,_/_/  /_/ /_/ /_/ ");
 		Console.WriteLine(@"=====================================================");
-		Console.WriteLine("Made by @yoshi-jp, Version " + VERSION);
+		Console.WriteLine("Made by @7654jp, Version " + VERSION);
 		bool innerClose = false;
 		//Argument
 		if (args[0] == "-OnStartUp")
@@ -162,7 +186,7 @@ public class Program
 			//Description label
 			Label SFDesc = new Label();
 			SFDesc.Font = new Font("Meiryo UI", 24, FontStyle.Bold);
-			SFDesc.Text = "This program will count time to\nprevents you from using the computer continuously\nfor more than 50 minutes.\n\nMade by @yoshi-jp, Version " + VERSION;
+			SFDesc.Text = "This program will count time to\nprevents you from using the computer continuously\nfor more than 50 minutes.\n\nMade by @7654jp, Version " + VERSION;
 			SFDesc.Location = new Point(50, 200);
 			SFDesc.AutoSize = false;
 			SFDesc.Size = SFDesc.PreferredSize;
@@ -186,11 +210,11 @@ public class Program
 			uint min = 0;
 			bool Dismissed = false;
 			if (VERSION.Contains("TEST"))
-			{ Console.WriteLine("Count test: 2 secs."); }
+			{ Console.WriteLine("Count test: 1 sec."); }
 			while (true)
 			{
 				if (VERSION.Contains("TEST"))
-				{ Thread.Sleep(2 * 1000); }
+				{ Thread.Sleep(1000); }
 				else
 				{ Thread.Sleep(5 * 60 * 1000); }
 				min += 5;
