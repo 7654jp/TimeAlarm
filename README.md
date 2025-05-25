@@ -1,14 +1,9 @@
-TimeAlarm by yoshi-jp @7654jp
-
-Version 1.6.1
+TimeAlarm by @7654jp
 
 This program was made to be used in two ways:
-1. Launch by startup : place a shortcut with "-OnStartUp"
-2. Launch by user : place a shortcut with "-OnUserCall"
+1. Startup launch : call this program with "-OnStartUp"
+2. User launch : call this program with "-OnUserCall"
 
-This program will not be updated anymore.
-Reason:
-I don't have any feature to add.
-I'm busy than before.
+This program will be updated VERY SLOWLY.
 
 Feel free to ask me to add new feature(s).
