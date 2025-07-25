@@ -1,1 +1,0 @@
-@csc /out:TAMain.exe TimeAlarm.cs
